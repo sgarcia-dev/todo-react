@@ -1,36 +1,27 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-class NewTodoInput extends React.Component {
+/* Usage of uncontrolled component with refs because we only need
+it to be used once for submission purposes. */
+export default class NewTodoInput extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			value: ''
-		};
-		this.submitNewTodo = props.createTodo;
-		this.handleKeyPress = this.handleKeyPress.bind(this);
-		this.handleChange = this.handleChange.bind(this);
+		this.createTodo = props.createTodo;
+		this.onKeyPress = this.onKeyPress.bind(this);
 	}
 
-	handleKeyPress(e) {
+	onKeyPress(e) {
 		const keyCode = e.keyCode || e.which;
+		// on enter key press
 		if (keyCode === 13) {
-			if(this.state.value) {
-				this.submitNewTodo(this.state.value);
-				this.setState({
-					value:''
-				});
+			const todo = this.todoInput.value;
+			if (todo) {
+				this.createTodo(todo);
+				this.todoInput.value = '';
 			} else {
-				alert('Please insert a valid todo.');
+				alert('Please enter a valid todo.');
 			}
 		}
-	}
-
-	handleChange(e) {
-		const propName = e.target.name,
-			value = e.target.value;
-		this.setState({
-			[propName]: value
-		});
 	}
 
 	render() {
@@ -38,11 +29,12 @@ class NewTodoInput extends React.Component {
 			name="value"
 			type="text"
 			className="form-control"
-			placeholder="Write your todo here..."
-			onKeyPress={this.handleKeyPress}
-			onChange={this.handleChange}
-			value={this.state.value}/>;
+			placeholder="Write your todo here, and press Enter to submit."
+			onKeyPress={this.onKeyPress}
+			ref={input => this.todoInput = input} />;
 	}
 }
 
-export default NewTodoInput;
+NewTodoInput.propTypes = {
+	createTodo: PropTypes.func.isRequired
+}

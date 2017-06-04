@@ -1,5 +1,6 @@
 const gulp = require('gulp'),
 	gp = require('gulp-load-plugins')();
+
 // custom plugins
 const p = {
 	runSequence: require('run-sequence'),
@@ -10,12 +11,6 @@ const p = {
 	del: require('del'),
 	browserSync: require('browser-sync')
 };
-
-gulp.task('clean', (done) => {
-	p.del('./public').then(function() {
-		done();
-	});
-});
 
 gulp.task('html', () => {
 	const injectSources = gulp.src([
@@ -63,6 +58,12 @@ gulp.task('browsersync', () => {
 			baseDir: './public'
 		},
 		files: 'public/**/*'
+	});
+});
+
+gulp.task('clean', (done) => {
+	p.del('./public').then(function() {
+		done();
 	});
 });
 

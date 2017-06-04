@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom';
 
 import TodoList from './components/todo-list.jsx';
 
+const todoList = [
+	'Learn React',
+	'Learn Redux'
+];
+
 ReactDOM.render(
-	<TodoList></TodoList>,
+	<TodoList todoList={todoList}></TodoList>,
 	document.getElementById('react-app'));

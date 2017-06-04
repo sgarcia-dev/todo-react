@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import NewTodoInput from './new-todo-input.jsx';
 import Todo from './todo.jsx';
 
@@ -6,33 +8,40 @@ class TodoList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			todos: [{
-				title: 'Learn ReactJS',
-				desc: 'Learn ReactJS at egghead.io and Udemy'
-			},
-			{
-				title: 'Learn AngularJS'
-			}]
+			todos: props.todoList || []
 		};
 		this.createTodo = this.createTodo.bind(this);
+		this.editTodo = this.editTodo.bind(this);
 		this.removeTodo = this.removeTodo.bind(this);
 	}
 
-	createTodo(text) {
+	createTodo(newTodoText) {
 		this.setState(prevState => {
-			const newTodos = prevState.todos.slice(0);
-			newTodos.push({title: text});
 			return {
-				todos: newTodos
+				todos: prevState.todos.concat(newTodoText)
 			};
 		});
 	}
 
-	removeTodo(todoTitle) {
+	editTodo(oldTodo) {
+		const newTodo = prompt('Todo:', oldTodo);
+		if (newTodo === oldTodo)
+			return;
 		this.setState(prevState => {
-			const newTodos = prevState.todos.filter((todo) => {
-				return todo.title != todoTitle;
-			});
+			const newTodos = prevState.todos.slice();
+			const todoIndex = newTodos.indexOf(oldTodo);
+			newTodos[todoIndex] = newTodo;
+			return {
+				todos: newTodos
+			}
+		});
+	}
+
+	removeTodo(todo) {
+		this.setState(prevState => {
+			const newTodos = prevState.todos.slice();
+			const todoIndex = newTodos.indexOf(todo);
+			newTodos.splice(todoIndex, 1);
 			return {
 				todos: newTodos
 			};
@@ -40,23 +49,24 @@ class TodoList extends React.Component {
 	}
 
 	render() {
-		const Todos = this.state.todos.map((todo, index) => (
-			<Todo
-				title={todo.title}
-				desc={todo.desc}
-				key={todo.title}
-				removeTodo={this.removeTodo}></Todo>
-		));
 		return (
 			<div>
 				<NewTodoInput createTodo={this.createTodo}></NewTodoInput>
 				<br/>
 				<div>
-					{Todos}
+					{ this.state.todos.map(todo => <Todo
+						title={todo}
+						removeTodo={this.removeTodo}
+						editTodo={this.editTodo}
+						key={todo}></Todo>)}
 				</div>
 			</div>
 		);
 	}
 }
+
+TodoList.propTypes = {
+	todoList: PropTypes.array
+};
 
 export default TodoList;
